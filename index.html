@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Synergy — Secure your crypto</title>
+<style>
+  /* ---- Design tokens (from the Selection colors panel) ---- */
+  :root {
+    --text-sub-600: #525252;     /* text/sub-600 */
+    --icon-sub-600: #525252;     /* icon/sub-600 */
+    --text-soft-400: #A3A3A3;    /* text/soft-400 */
+    --stroke-soft-200: #E5E5E5;  /* stroke/soft-200 */
+    --bg-white-0: #FFFFFF;       /* bg/white-0 */
+
+    --white: #FFFFFF;            /* FFFFFF */
+    --black: #000000;            /* 000000 */
+    --blue: #1E56FE;             /* 1E56FE */
+    --ink-222: #222222;          /* 222222 */
+    --ink-333: #333333;          /* 333333 */
+    --gray-a3: #A3A3A3;          /* A3A3A3 */
+
+    /* hover accent requested in brief */
+    --purple: #7C3AED;
+    --light-grey: #D4D4D4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { -webkit-font-smoothing: antialiased; }
+
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: var(--black);
+    color: var(--white);
+    min-height: 100vh;
+  }
+
+  .frame {
+    max-width: 1440px;
+    margin: 0 auto;
+    background:
+      radial-gradient(1200px 700px at 78% 40%, #0e1a3a 0%, transparent 60%),
+      linear-gradient(180deg, #050507 0%, #0a0a0d 100%);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* ---------- Navigation ---------- */
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 26px 40px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    color: var(--white);
+  }
+  .brand sup { font-size: 9px; font-weight: 600; opacity: .8; }
+  .brand .mark { color: var(--white); display: inline-flex; }
+
+  .primary-nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+  .primary-nav a {
+    color: rgba(255,255,255,.82);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: color .15s ease;
+  }
+  .primary-nav a:hover { color: var(--white); }
+  .primary-nav a.btn { color: var(--ink-222); }
+  .primary-nav a.btn:hover { color: var(--white); }
+  .primary-nav a:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; border-radius: 3px; }
+
+  .badge-new {
+    background: var(--blue);
+    color: var(--white);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    padding: 2px 5px;
+    border-radius: 4px;
+  }
+  .caret { width: 9px; height: 9px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 9px;
+    padding: 11px 18px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: background-color .18s ease, color .18s ease, transform .18s ease;
+  }
+  .btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+
+  /* white button -> purple on hover */
+  .btn-white {
+    background: var(--white);
+    color: var(--ink-222);
+  }
+  .btn-white:hover {
+    background: var(--purple);
+    color: var(--white);
+  }
+  .btn-white:hover .arrow { stroke: var(--white); }
+
+  /* grey button -> light grey on hover */
+  .btn-grey {
+    background: var(--ink-333);
+    color: var(--white);
+  }
+  .btn-grey:hover {
+    background: var(--light-grey);
+    color: var(--ink-222);
+  }
+
+  .nav-cta { padding: 9px 16px; border-radius: 999px; font-size: 13px; }
+  .arrow { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; transition: stroke .18s ease; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    align-items: center;
+    gap: 40px;
+    padding: 30px 40px 60px;
+  }
+
+  .hero-copy { max-width: 460px; }
+  .hero h1 {
+    font-size: 60px;
+    line-height: 1.02;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 26px;
+  }
+  .hero p {
+    color: var(--text-soft-400);
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+  }
+  .hero-actions { display: flex; gap: 12px; }
+
+  /* floating image placeholder */
+  .hero-media {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .media-placeholder {
+    width: 100%;
+    max-width: 460px;
+    aspect-ratio: 1 / 1;
+    /* background: #3a3a3a; */
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-a3);
+    font-size: 13px;
+    letter-spacing: .02em;
+    animation: float 4.5s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(-12px); }
+    50%      { transform: translateY(12px); }
+  }
+
+  /* ---------- Logo strip ---------- */
+  .logo-strip {
+    background: var(--bg-white-0);
+    border-radius: 14px;
+    margin: 0 14px 14px;
+    padding: 22px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+  .logo-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-sub-600);
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .logo-item sup { font-size: 8px; font-weight: 600; }
+  .logo-item svg { width: 20px; height: 20px; color: var(--icon-sub-600); }
+
+  /* ---------- Solutions Dropdown ---------- */
+  .has-dropdown { position: relative; }
+
+  .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    background: rgba(13, 14, 20, 0.97);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 14px;
+    padding: 28px;
+    width: 700px;
+    display: grid;
+    grid-template-columns: 1fr 0.42fr;
+    gap: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease, visibility .2s;
+    backdrop-filter: blur(16px);
+    z-index: 100;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  }
+
+  .has-dropdown:hover .dropdown-menu,
+  .has-dropdown:focus-within .dropdown-menu,
+  .dropdown-menu:hover {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* arrow indicator */
+  .dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 10px;
+    height: 10px;
+    background: rgba(13, 14, 20, 0.97);
+    border-left: 1px solid rgba(255,255,255,.1);
+    border-top: 1px solid rgba(255,255,255,.1);
+  }
+
+  .dropdown-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    padding-right: 20px;
+    border-right: 1px solid rgba(255,255,255,.07);
+  }
+
+  .dropdown-small {
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  /* Featured cards (grid items) */
+  .dd-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.03);
+    padding: 18px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--white);
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .dd-card:hover {
+    background: rgba(255,255,255,.07);
+    border-color: rgba(255,255,255,.18);
+  }
+  .dd-card-icon {
+    width: 32px;
+    height: 32px;
+    color: rgba(255,255,255,.7);
+  }
+  .dd-card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,.85);
+    line-height: 1.3;
+  }
+  .dd-card-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,.4);
+    line-height: 1.4;
+  }
+
+  /* Small list items */
+  .dd-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: rgba(255,255,255,.7);
+    font-size: 13px;
+    font-weight: 500;
+    transition: background .12s ease, color .12s ease;
+  }
+  .dd-item:hover { background: rgba(255,255,255,.07); color: var(--white); }
+  .dd-item svg { width: 14px; height: 14px; flex-shrink: 0; opacity: .65; }
+  .dd-item-arrow {
+    margin-left: auto;
+    width: 12px;
+    height: 12px;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity .12s ease, transform .12s ease;
+  }
+  .dd-item:hover .dd-item-arrow { opacity: .6; transform: translateX(0); }
+
+  /* rotate caret when open */
+  .has-dropdown:hover .caret,
+  .has-dropdown:focus-within .caret { transform: rotate(180deg); }
+  .caret { transition: transform .2s ease; }
+
+  /* mobile accordion always hidden on desktop */
+  .mobile-accordion-content { display: none; }
+
+  /* ---------- Hamburger toggle ---------- */
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+    padding: 6px;
+    line-height: 0;
+  }
+  .nav-toggle svg { width: 26px; height: 26px; }
+  .nav-toggle .icon-close { display: none; }
+  .nav-toggle[aria-expanded="true"] .icon-menu { display: none; }
+  .nav-toggle[aria-expanded="true"] .icon-close { display: block; }
+  .nav-toggle:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
+
+  .primary-nav a.menu-cta { display: none; }
+
+  @media (max-width: 880px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 44px; }
+    .logo-strip { justify-content: center; }
+
+    .nav-toggle { display: inline-flex; }
+    .desktop-cta { display: none; }
+
+    /* hide desktop dropdown, enable mobile accordion */
+    .dropdown-menu { display: none !important; }
+    .mobile-accordion-content {
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      padding: 4px 8px 10px;
+    }
+    .mobile-accordion-content.open { display: flex; }
+
+    /* drawer */
+    .primary-nav {
+      position: fixed;
+      inset: 84px 14px auto 14px;
+      background: #0d0e14;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      padding: 14px;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 6px;
+      transform: translateY(-12px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .2s ease, transform .2s ease, visibility .2s;
+      z-index: 50;
+    }
+    .primary-nav.open {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+    }
+    .primary-nav ul {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+    .primary-nav li { border-bottom: 1px solid rgba(255,255,255,.06); }
+    .primary-nav li:last-child { border-bottom: none; }
+    .primary-nav a {
+      padding: 14px 8px;
+      font-size: 16px;
+      justify-content: space-between;
+    }
+    .primary-nav a.menu-cta {
+      display: inline-flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .mobile-sub-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 8px;
+      border-radius: 7px;
+      text-decoration: none;
+      color: rgba(255,255,255,.65);
+      font-size: 14px;
+      font-weight: 500;
+      transition: background .12s ease, color .12s ease;
+    }
+    .mobile-sub-link:hover { background: rgba(255,255,255,.06); color: var(--white); }
+    .mobile-sub-link svg { width: 15px; height: 15px; opacity: .6; flex-shrink: 0; }
+  }
+
+  @media (max-width: 480px) {
+    .site-header { padding: 22px 20px; }
+    .hero { padding: 24px 20px 48px; }
+    .hero h1 { font-size: 36px; }
+    .hero-actions { flex-direction: column; }
+    .hero-actions .btn { justify-content: center; }
+    .primary-nav { inset: 76px 12px auto 12px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .media-placeholder { animation: none; }
+    .btn { transition: background-color .18s ease, color .18s ease; }
+    .primary-nav { transition: opacity .2s ease, visibility .2s; }
+  }
+</style>
+</head>
+<body>
+  <div class="frame">
+
+    <!-- ================= HEADER ================= -->
+    <header class="site-header">
+      <div class="brand">
+        <span class="mark" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2 4 7v10l8 5 8-5V7l-8-5Z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M12 7v10M7.5 9.5l9 5M16.5 9.5l-9 5" stroke="#fff" stroke-width="1.2"/>
+          </svg>
+        </span>
+        Synergy<sup>™</sup>
+      </div>
+
+      <nav class="primary-nav" id="primary-nav" aria-label="Primary">
+        <ul>
+          <li><a href="#">Products</a></li>
+          <li><a href="#">Services <span class="badge-new">NEW</span></a></li>
+          <li class="has-dropdown">
+            <a href="#" aria-haspopup="true" aria-expanded="false" id="solutions-trigger">Solutions
+              <svg class="caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 5l3 3 3-3"/></svg>
+            </a>
+            <!-- Desktop dropdown -->
+            <div class="dropdown-menu" role="region" aria-label="Solutions menu">
+              <div class="dropdown-grid">
+                <a href="#" class="dd-card">
+                  <svg class="dd-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-2.5 4-2.5 14 0 18M12 3c2.5 4 2.5 14 0 18"/>
+                  </svg>
+                  <span class="dd-card-title">Website Builder</span>
+                  <span class="dd-card-desc">Create responsive websites with ease</span>
+                </a>
+                <a href="#" class="dd-card">
+                  <svg class="dd-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+                  </svg>
+                  <span class="dd-card-title">Cloud Platform</span>
+                  <span class="dd-card-desc">Deploy and scale apps in the cloud</span>
+                </a>
+                <a href="#" class="dd-card">
+                  <svg class="dd-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  <span class="dd-card-title">Team Collaboration</span>
+                  <span class="dd-card-desc">Tools to help your teams work better together</span>
+                </a>
+              </div>
+              <div class="dropdown-small">
+                <a href="#" class="dd-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h18v18H3zM3 9h18M9 21V9"/></svg>
+                  Analytics
+                  <svg class="dd-item-arrow" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                </a>
+                <a href="#" class="dd-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                  Integrations
+                  <svg class="dd-item-arrow" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                </a>
+                <a href="#" class="dd-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M2 20c1-4 5-7 10-7s9 3 10 7"/></svg>
+                  E-Commerce
+                  <svg class="dd-item-arrow" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                </a>
+                <a href="#" class="dd-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  Security
+                  <svg class="dd-item-arrow" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                </a>
+                <a href="#" class="dd-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                  API
+                  <svg class="dd-item-arrow" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                </a>
+              </div>
+            </div>
+            <!-- Mobile accordion (shown only in mobile drawer) -->
+            <div class="mobile-accordion-content" id="solutions-mobile-content">
+              <a href="#" class="mobile-sub-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-2.5 4-2.5 14 0 18M12 3c2.5 4 2.5 14 0 18"/></svg>
+                Website Builder
+              </a>
+              <a href="#" class="mobile-sub-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                Cloud Platform
+              </a>
+              <a href="#" class="mobile-sub-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Team Collaboration
+              </a>
+              <a href="#" class="mobile-sub-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3zM3 9h18M9 21V9"/></svg>
+                Analytics
+              </a>
+              <a href="#" class="mobile-sub-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                Integrations
+              </a>
+              <a href="#" class="mobile-sub-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Security
+              </a>
+              <a href="#" class="mobile-sub-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                API
+              </a>
+            </div>
+          </li>
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+        <a href="#" class="btn btn-white nav-cta menu-cta">Get started</a>
+      </nav>
+
+      <a href="#" class="btn btn-white nav-cta desktop-cta">Get started</a>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav">
+        <svg class="icon-menu" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg class="icon-close" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+
+    <!-- ================= HERO ================= -->
+    <main class="hero">
+      <section class="hero-copy">
+        <h1>Secure your crypto. Anytime, Anywhere.</h1>
+        <p>From wireframes to polished interfaces — get instant feedback,
+           fresh ideas, and clean code. Our tool works alongside you, so you
+           spend less time stuck and more time shipping.</p>
+        <div class="hero-actions">
+          <a href="#" class="btn btn-white">
+            Get started free
+            <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M6 4h6v6"/></svg>
+          </a>
+          <a href="#" class="btn btn-grey">Talk to sales</a>
+        </div>
+      </section>
+
+      <aside class="hero-media">
+        <div class="media-placeholder" role="img" aria-label="Product visual placeholder">
+          <img src="img/cube-helix 2.png" alt="Product visual" style="width:100%;height:100%;object-fit:cover;" />
+        </div>
+      </aside>
+    </main>
+
+    <!-- ================= LOGO STRIP ================= -->
+    <footer class="logo-strip" aria-label="Trusted by">
+      <span class="logo-item">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 7v10l8 5 8-5V7l-8-5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        Synergy<sup>™</sup>
+      </span>
+      <span class="logo-item">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M3 13h18" stroke="currentColor" stroke-width="1.6"/></svg>
+        Horizon<sup>™</sup>
+      </span>
+      <span class="logo-item">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M16 4a8 8 0 1 0 4 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Catalyst<sup>™</sup>
+      </span>
+      <span class="logo-item">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3c3 4 5 6 5 9a5 5 0 0 1-10 0c0-3 2-5 5-9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        Phoenix<sup>™</sup>
+      </span>
+      <span class="logo-item">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 12h4l2-6 4 14 2-8h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Pulse<sup>™</sup>
+      </span>
+      <span class="logo-item">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Solaris<sup>™</sup>
+      </span>
+      <span class="logo-item">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 16c4-8 14-8 18 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M7 16a5 5 0 0 1 10 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Aurora<sup>™</sup>
+      </span>
+    </footer>
+
+  </div>
+
+  <script>
+    (function () {
+      var toggle = document.getElementById('nav-toggle');
+      var nav = document.getElementById('primary-nav');
+
+      function setOpen(open) {
+        nav.classList.toggle('open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      }
+
+      toggle.addEventListener('click', function () {
+        setOpen(!nav.classList.contains('open'));
+      });
+
+      // close when a non-dropdown link is tapped on mobile
+      nav.addEventListener('click', function (e) {
+        var link = e.target.closest('a');
+        if (link && !link.getAttribute('aria-haspopup') && window.innerWidth <= 880) setOpen(false);
+      });
+
+      // close on Escape
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') setOpen(false);
+      });
+
+      // reset state if resized back to desktop
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 880) {
+          setOpen(false);
+          var mobileContent = document.getElementById('solutions-mobile-content');
+          if (mobileContent) mobileContent.classList.remove('open');
+        }
+      });
+
+      // Mobile accordion for Solutions
+      var solutionsTrigger = document.getElementById('solutions-trigger');
+      var mobileContent = document.getElementById('solutions-mobile-content');
+
+      if (solutionsTrigger && mobileContent) {
+        solutionsTrigger.addEventListener('click', function (e) {
+          if (window.innerWidth <= 880) {
+            e.preventDefault();
+            var isOpen = mobileContent.classList.toggle('open');
+            solutionsTrigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            var caret = solutionsTrigger.querySelector('.caret');
+            if (caret) caret.style.transform = isOpen ? 'rotate(180deg)' : '';
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
