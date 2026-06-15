@@ -185,12 +185,12 @@
     color: var(--gray-a3);
     font-size: 13px;
     letter-spacing: .02em;
-    animation: float 4.5s ease-in-out infinite;
+    animation: spin 12s linear infinite;
   }
 
-  @keyframes float {
-    0%, 100% { transform: translateY(-12px); }
-    50%      { transform: translateY(12px); }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
   }
 
   /* ---------- Logo strip ---------- */
@@ -198,13 +198,38 @@
     background: var(--bg-white-0);
     border-radius: 14px;
     margin: 0 14px 14px;
-    padding: 22px 20px;
+    padding: 18px 0;
+    overflow: hidden;
+    position: relative;
+  }
+  /* fade edges */
+  .logo-strip::before,
+  .logo-strip::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 80px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .logo-strip::before { left: 0;  background: linear-gradient(to right, var(--bg-white-0), transparent); }
+  .logo-strip::after  { right: 0; background: linear-gradient(to left,  var(--bg-white-0), transparent); }
+
+  .logo-track {
     display: flex;
     align-items: center;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    gap: 18px;
+    gap: 48px;
+    width: max-content;
+    animation: marquee 22s linear infinite;
   }
+  .logo-strip:hover .logo-track { animation-play-state: paused; }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
   .logo-item {
     display: inline-flex;
     align-items: center;
@@ -212,6 +237,8 @@
     color: var(--text-sub-600);
     font-size: 15px;
     font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .logo-item sup { font-size: 8px; font-weight: 600; }
   .logo-item svg { width: 20px; height: 20px; color: var(--icon-sub-600); }
@@ -369,7 +396,7 @@
   @media (max-width: 880px) {
     .hero { grid-template-columns: 1fr; }
     .hero h1 { font-size: 44px; }
-    .logo-strip { justify-content: center; }
+    .logo-strip { padding: 16px 0; }
 
     .nav-toggle { display: inline-flex; }
     .desktop-cta { display: none; }
@@ -451,6 +478,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .media-placeholder { animation: none; }
+    .logo-track { animation: none; }
     .btn { transition: background-color .18s ease, color .18s ease; }
     .primary-nav { transition: opacity .2s ease, visibility .2s; }
   }
@@ -603,34 +631,24 @@
 
     <!-- ================= LOGO STRIP ================= -->
     <footer class="logo-strip" aria-label="Trusted by">
-      <span class="logo-item">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 7v10l8 5 8-5V7l-8-5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-        Synergy<sup>™</sup>
-      </span>
-      <span class="logo-item">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M3 13h18" stroke="currentColor" stroke-width="1.6"/></svg>
-        Horizon<sup>™</sup>
-      </span>
-      <span class="logo-item">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M16 4a8 8 0 1 0 4 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-        Catalyst<sup>™</sup>
-      </span>
-      <span class="logo-item">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3c3 4 5 6 5 9a5 5 0 0 1-10 0c0-3 2-5 5-9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-        Phoenix<sup>™</sup>
-      </span>
-      <span class="logo-item">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 12h4l2-6 4 14 2-8h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Pulse<sup>™</sup>
-      </span>
-      <span class="logo-item">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-        Solaris<sup>™</sup>
-      </span>
-      <span class="logo-item">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 16c4-8 14-8 18 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M7 16a5 5 0 0 1 10 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-        Aurora<sup>™</sup>
-      </span>
+      <div class="logo-track" aria-hidden="true">
+        <!-- original set -->
+        <span class="logo-item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 7v10l8 5 8-5V7l-8-5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Synergy<sup>™</sup></span>
+        <span class="logo-item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M3 13h18" stroke="currentColor" stroke-width="1.6"/></svg>Horizon<sup>™</sup></span>
+        <span class="logo-item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M16 4a8 8 0 1 0 4 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Catalyst<sup>™</sup></span>
+        <span class="logo-item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3c3 4 5 6 5 9a5 5 0 0 1-10 0c0-3 2-5 5-9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Phoenix<sup>™</sup></span>
+        <span class="logo-item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 12h4l2-6 4 14 2-8h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Pulse<sup>™</sup></span>
+        <span class="logo-item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Solaris<sup>™</sup></span>
+        <span class="logo-item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 16c4-8 14-8 18 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M7 16a5 5 0 0 1 10 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Aurora<sup>™</sup></span>
+        <!-- duplicate set for seamless loop -->
+        <span class="logo-item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 7v10l8 5 8-5V7l-8-5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Synergy<sup>™</sup></span>
+        <span class="logo-item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M3 13h18" stroke="currentColor" stroke-width="1.6"/></svg>Horizon<sup>™</sup></span>
+        <span class="logo-item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M16 4a8 8 0 1 0 4 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Catalyst<sup>™</sup></span>
+        <span class="logo-item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3c3 4 5 6 5 9a5 5 0 0 1-10 0c0-3 2-5 5-9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Phoenix<sup>™</sup></span>
+        <span class="logo-item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 12h4l2-6 4 14 2-8h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Pulse<sup>™</sup></span>
+        <span class="logo-item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Solaris<sup>™</sup></span>
+        <span class="logo-item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 16c4-8 14-8 18 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M7 16a5 5 0 0 1 10 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Aurora<sup>™</sup></span>
+      </div>
     </footer>
 
   </div>
