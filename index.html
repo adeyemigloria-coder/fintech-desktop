@@ -54,6 +54,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 26px 40px;
+    position: relative;
+    z-index: 200;
   }
 
   .brand {
@@ -482,13 +484,72 @@
     .btn { transition: background-color .18s ease, color .18s ease; }
     .primary-nav { transition: opacity .2s ease, visibility .2s; }
   }
+
+  /* ---------- Entrance animations ---------- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes fadeRight {
+    from { opacity: 0; transform: translateX(40px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .anim-fade-down  { animation: fadeDown  0.6s cubic-bezier(.22,.68,0,1.2) both; }
+  .anim-fade-up    { animation: fadeUp    0.7s cubic-bezier(.22,.68,0,1.2) both; }
+  .anim-fade-in    { animation: fadeIn    0.7s ease both; }
+  .anim-fade-right { animation: fadeRight 0.8s cubic-bezier(.22,.68,0,1.2) both; }
+
+  .delay-1 { animation-delay: 0.05s; }
+  .delay-2 { animation-delay: 0.15s; }
+  .delay-3 { animation-delay: 0.28s; }
+  .delay-4 { animation-delay: 0.42s; }
+  .delay-5 { animation-delay: 0.58s; }
+  .delay-6 { animation-delay: 0.72s; }
+  .delay-7 { animation-delay: 0.88s; }
+
+  /* Parallax wrapper — JS writes transform here */
+  .parallax-copy { transition: transform 0.08s linear; }
+
+  /* ---------- Per-character reveal ---------- */
+  @keyframes charReveal {
+    from { opacity: 0; transform: translateY(0.45em); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .char {
+    display: inline-block;
+    opacity: 0;
+    animation: charReveal 0.5s cubic-bezier(.22,.68,0,1.2) forwards;
+  }
+
+  /* title chars slightly bigger motion; subtitle quicker/lighter */
+  #hero-title  .char { animation-duration: 0.5s; }
+  #hero-subtitle .char { animation-duration: 0.35s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .anim-fade-down, .anim-fade-up, .anim-fade-in, .anim-fade-right {
+      animation: none;
+      opacity: 1;
+    }
+    .parallax-copy { transition: none; }
+    .char { animation: none; opacity: 1; transform: none; }
+  }
 </style>
 </head>
 <body>
   <div class="frame">
 
     <!-- ================= HEADER ================= -->
-    <header class="site-header">
+    <header class="site-header anim-fade-down delay-1">
       <div class="brand">
         <span class="mark" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -608,12 +669,10 @@
 
     <!-- ================= HERO ================= -->
     <main class="hero">
-      <section class="hero-copy">
-        <h1>Secure your crypto. Anytime, Anywhere.</h1>
-        <p>From wireframes to polished interfaces — get instant feedback,
-           fresh ideas, and clean code. Our tool works alongside you, so you
-           spend less time stuck and more time shipping.</p>
-        <div class="hero-actions">
+      <section class="hero-copy parallax-copy">
+        <h1 id="hero-title">Secure your crypto. Anytime, Anywhere.</h1>
+        <p id="hero-subtitle">From wireframes to polished interfaces — get instant feedback, fresh ideas, and clean code. Our tool works alongside you, so you spend less time stuck and more time shipping.</p>
+        <div class="hero-actions anim-fade-up delay-4">
           <a href="#" class="btn btn-white">
             Get started free
             <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M6 4h6v6"/></svg>
@@ -622,15 +681,15 @@
         </div>
       </section>
 
-      <aside class="hero-media">
+      <aside class="hero-media anim-fade-right delay-5">
         <div class="media-placeholder" role="img" aria-label="Product visual placeholder">
-          <img src="img/cube-helix 2.png" alt="Product visual" style="width:100%;height:100%;object-fit:cover;" />
+          <img src="Img/cube-helix 2.png" alt="Product visual" style="width:100%;height:100%;object-fit:cover;" />
         </div>
       </aside>
     </main>
 
     <!-- ================= LOGO STRIP ================= -->
-    <footer class="logo-strip" aria-label="Trusted by">
+    <footer class="logo-strip anim-fade-in delay-7" aria-label="Trusted by">
       <div class="logo-track" aria-hidden="true">
         <!-- original set -->
         <span class="logo-item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 7v10l8 5 8-5V7l-8-5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Synergy<sup>™</sup></span>
@@ -703,6 +762,89 @@
           }
         });
       }
+    })();
+  </script>
+
+  <script>
+    /* ---- Per-character text reveal ---- */
+    (function () {
+      var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) return;
+
+      function splitChars(el, startDelay, stepMs) {
+        var text = el.innerText;
+        el.setAttribute('aria-label', text);
+        el.innerHTML = '';
+
+        var delay = startDelay;
+        for (var i = 0; i < text.length; i++) {
+          var c = text[i];
+          var span = document.createElement('span');
+          if (c === ' ') {
+            /* plain space — no animation, just a word gap */
+            span.innerHTML = '&nbsp;';
+            span.style.cssText = 'display:inline-block;width:0.28em;';
+          } else {
+            span.className = 'char';
+            span.setAttribute('aria-hidden', 'true');
+            span.textContent = c;
+            span.style.animationDelay = delay + 'ms';
+            delay += stepMs;
+          }
+          el.appendChild(span);
+        }
+      }
+
+      /* h1: starts at 200ms, 22ms per char */
+      var title = document.getElementById('hero-title');
+      if (title) splitChars(title, 200, 22);
+
+      /* p: starts after title's last char (~200 + ~40 chars * 22ms ≈ 1080ms), 7ms per char */
+      var subtitle = document.getElementById('hero-subtitle');
+      if (subtitle) splitChars(subtitle, 950, 7);
+    })();
+  </script>
+
+  <script>
+    /* ---- Cursor parallax on hero copy ---- */
+    (function () {
+      var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) return;
+
+      var copy   = document.querySelector('.parallax-copy');
+      var hero   = document.querySelector('.hero');
+      if (!copy || !hero) return;
+
+      var targetX = 0, targetY = 0;
+      var currentX = 0, currentY = 0;
+      var raf;
+
+      function lerp(a, b, t) { return a + (b - a) * t; }
+
+      function tick() {
+        currentX = lerp(currentX, targetX, 0.07);
+        currentY = lerp(currentY, targetY, 0.07);
+        copy.style.transform = 'translate(' + currentX.toFixed(2) + 'px,' + currentY.toFixed(2) + 'px)';
+        raf = requestAnimationFrame(tick);
+      }
+
+      document.addEventListener('mousemove', function (e) {
+        var rect   = hero.getBoundingClientRect();
+        /* normalise -1 → +1 relative to hero centre */
+        var nx = ((e.clientX - rect.left)  / rect.width  - 0.5) * 2;
+        var ny = ((e.clientY - rect.top)   / rect.height - 0.5) * 2;
+        /* move copy subtly opposite to cursor for depth */
+        targetX = -nx * 14;
+        targetY = -ny * 9;
+      });
+
+      /* reset smoothly when cursor leaves */
+      document.addEventListener('mouseleave', function () {
+        targetX = 0;
+        targetY = 0;
+      });
+
+      tick();
     })();
   </script>
 </body>
