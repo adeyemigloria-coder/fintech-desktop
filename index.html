@@ -772,27 +772,35 @@
       if (prefersReduced) return;
 
       function splitChars(el, startDelay, stepMs) {
-        var text = el.innerText;
+        var text = el.innerText.trim();
         el.setAttribute('aria-label', text);
         el.innerHTML = '';
 
+        var words = text.split(' ');
         var delay = startDelay;
-        for (var i = 0; i < text.length; i++) {
-          var c = text[i];
-          var span = document.createElement('span');
-          if (c === ' ') {
-            /* plain space — no animation, just a word gap */
-            span.innerHTML = '&nbsp;';
-            span.style.cssText = 'display:inline-block;width:0.28em;';
-          } else {
-            span.className = 'char';
-            span.setAttribute('aria-hidden', 'true');
-            span.textContent = c;
-            span.style.animationDelay = delay + 'ms';
+
+        words.forEach(function (word, wi) {
+          /* wrap each word so it never breaks mid-character */
+          var wordWrap = document.createElement('span');
+          wordWrap.style.cssText = 'display:inline-block; white-space:nowrap;';
+
+          for (var i = 0; i < word.length; i++) {
+            var charSpan = document.createElement('span');
+            charSpan.className = 'char';
+            charSpan.setAttribute('aria-hidden', 'true');
+            charSpan.textContent = word[i];
+            charSpan.style.animationDelay = delay + 'ms';
             delay += stepMs;
+            wordWrap.appendChild(charSpan);
           }
-          el.appendChild(span);
-        }
+
+          el.appendChild(wordWrap);
+
+          /* real space between words so the browser wraps lines naturally */
+          if (wi < words.length - 1) {
+            el.appendChild(document.createTextNode(' '));
+          }
+        });
       }
 
       /* h1: starts at 200ms, 22ms per char */
